@@ -138,4 +138,24 @@ public ResponseEntity<?> obtenerResumen() {
             pedidoService.obtenerResumen()
     );
 }
+    @GetMapping("/siguiente")
+public ResponseEntity<?> obtenerSiguientePedido() {
+
+    Pedido pedido = pedidoService.obtenerSiguientePedido();
+
+    if (pedido == null) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body("No hay pedidos pendientes");
+    }
+
+    return ResponseEntity.ok(pedido);
+}
+    @GetMapping("/en-riesgo")
+public ResponseEntity<?> obtenerPedidosEnRiesgo() {
+
+    return ResponseEntity.ok(
+            pedidoService.obtenerPedidosEnRiesgo()
+    );
+}
 }

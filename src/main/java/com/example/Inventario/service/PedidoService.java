@@ -87,10 +87,10 @@ public class PedidoService {
 
     // Comprobar stock
     if (producto.getStock() < pedido.getCantidad()) {
-        throw new IllegalArgumentException(
-                "Stock insuficiente. Stock disponible: "
-                        + producto.getStock()
-        );
+
+    pedido.setEstado("SIN_STOCK");
+
+    return pedido;
     }
 
     // Descontar stock
@@ -297,5 +297,80 @@ public String obtenerResumen() {
             cancelados,
             urgentes
     );
+}
+    public Pedido obtenerSiguientePedido() {
+
+    Pedido siguiente = null;
+
+    for (Pedido pedido : pedidos) {
+
+        // Solo consideramos pedidos pendientes
+        if (!pedido.getEstado().equals("PENDIENTE")) {
+            continue;
+        }
+
+        if (siguiente == null) {
+            siguiente = pedido;
+            continue;
+        }
+
+        int prioridadActual = valorPrioridad(pedido.getPrioridad());
+        int prioridadSiguiente = valorPrioridad(siguiente.getPrioridad());
+
+        // Mayor prioridad = mayor valor
+        if (prioridadActual > prioridadSiguiente) {
+            siguiente = pedido;
+        }
+
+        // Si tienen la misma prioridad, gana el ID menor
+        else if (prioridadActual == prioridadSiguiente
+                && pedido.getId() < siguiente.getId()) {
+            siguiente = pedido;
+        }
+    }
+
+    return siguiente;
+}
+
+private int valorPrioridad(String prioridad) {
+
+    switch (prioridad) {
+        case "URGENTE":
+            return 4;
+
+        case "ALTA":
+            return 3;
+
+        case "MEDIA":
+            return 2;
+
+        case "BAJA":
+            return 1;
+
+        default:
+            return 0;
+    }
+}
+   public List<Pedido> obtenerPedidosEnRiesgo() {
+
+    List<Pedido> resultado = new ArrayList<>();
+
+    for (Pedido pedido : pedidos) {
+
+        if (!pedido.getEstado().equals("PENDIENTE")
+                && !pedido.getEstado().equals("SIN_STOCK")) {
+            continue;
+        }
+
+        Producto producto = buscarProducto(pedido.getProductoId());
+
+        if (producto != null &&
+                pedido.getCantidad() > producto.getStock()) {
+
+            resultado.add(pedido);
+        }
+    }
+
+    return resultado;
 }
 }
