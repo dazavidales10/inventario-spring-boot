@@ -63,4 +63,50 @@ public ResponseEntity<?> confirmarPedido(@PathVariable Long id) {
                 .body(e.getMessage());
     }
 }
+
+    @PutMapping("/{id}/cancelar")
+public ResponseEntity<?> cancelarPedido(@PathVariable Long id) {
+
+    try {
+
+        Pedido pedido = pedidoService.cancelarPedido(id);
+
+        return ResponseEntity.ok(pedido);
+
+    } catch (IllegalArgumentException e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(e.getMessage());
+
+    } catch (RuntimeException e) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(e.getMessage());
+    }
+}
+
+    @PutMapping("/{id}/despachar")
+public ResponseEntity<?> despacharPedido(@PathVariable Long id) {
+
+    try {
+
+        Pedido pedido = pedidoService.despacharPedido(id);
+
+        return ResponseEntity.ok(pedido);
+
+    } catch (IllegalArgumentException e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(e.getMessage());
+
+    } catch (RuntimeException e) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(e.getMessage());
+    }
+}
 }

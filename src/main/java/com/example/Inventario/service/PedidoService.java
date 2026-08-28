@@ -103,6 +103,55 @@ public class PedidoService {
 
     return pedido;
 }
+
+    public Pedido cancelarPedido(Long id) {
+
+    Pedido pedido = null;
+
+    // Buscar el pedido
+    for (Pedido p : pedidos) {
+        if (p.getId().equals(id)) {
+            pedido = p;
+            break;
+        }
+    }
+
+    // Si no existe
+    if (pedido == null) {
+        throw new RuntimeException("Pedido no encontrado");
+    }
+
+    // No se puede cancelar un pedido ya despachado
+    if (pedido.getEstado().equals("DESPACHADO")) {
+        throw new IllegalArgumentException(
+                "No se puede cancelar un pedido despachado"
+        );
+    }
+
+    // No se puede cancelar dos veces
+    if (pedido.getEstado().equals("CANCELADO")) {
+        throw new IllegalArgumentException(
+                "El pedido ya está cancelado"
+        );
+    }
+
+    // Si estaba confirmado, devolver el stock
+    if (pedido.getEstado().equals("CONFIRMADO")) {
+
+        Producto producto = buscarProducto(pedido.getProductoId());
+
+        if (producto != null) {
+            producto.setStock(
+                    producto.getStock() + pedido.getCantidad()
+            );
+        }
+    }
+
+    // Cambiar estado
+    pedido.setEstado("CANCELADO");
+
+    return pedido;
+}
     private boolean esPrioridadValida(String prioridad) {
 
         return prioridad.equals("BAJA") ||
@@ -130,4 +179,34 @@ public class PedidoService {
     public List<Pedido> obtenerPedidos() {
         return pedidos;
     }
+
+    public Pedido despacharPedido(Long id) {
+
+    Pedido pedido = null;
+
+    // Buscar el pedido
+    for (Pedido p : pedidos) {
+        if (p.getId().equals(id)) {
+            pedido = p;
+            break;
+        }
+    }
+
+    // Si no existe
+    if (pedido == null) {
+        throw new RuntimeException("Pedido no encontrado");
+    }
+
+    // Solo se pueden despachar pedidos confirmados
+    if (!pedido.getEstado().equals("CONFIRMADO")) {
+        throw new IllegalArgumentException(
+                "Solo se pueden despachar pedidos CONFIRMADOS"
+        );
+    }
+
+    // Cambiar estado
+    pedido.setEstado("DESPACHADO");
+
+    return pedido;
+}
 }
