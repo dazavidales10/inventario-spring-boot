@@ -109,4 +109,33 @@ public ResponseEntity<?> despacharPedido(@PathVariable Long id) {
                 .body(e.getMessage());
     }
 }
+    @GetMapping("/pendientes")
+public ResponseEntity<?> obtenerPendientes() {
+
+    return ResponseEntity.ok(
+            pedidoService.obtenerPendientes()
+    );
+}
+    @GetMapping("/urgentes")
+public ResponseEntity<?> obtenerUrgentes() {
+
+    return ResponseEntity.ok(
+            pedidoService.obtenerUrgentes()
+    );
+}
+    @GetMapping("/estado")
+public ResponseEntity<?> obtenerPorEstado(
+        @RequestParam String estado) {
+
+    return ResponseEntity.ok(
+            pedidoService.obtenerPorEstado(estado)
+    );
+}
+    @GetMapping("/resumen")
+public ResponseEntity<?> obtenerResumen() {
+
+    return ResponseEntity.ok(
+            pedidoService.obtenerResumen()
+    );
+}
 }

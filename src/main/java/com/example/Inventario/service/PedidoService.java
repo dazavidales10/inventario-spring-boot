@@ -209,4 +209,93 @@ public class PedidoService {
 
     return pedido;
 }
+public List<Pedido> obtenerPendientes() {
+
+    List<Pedido> resultado = new ArrayList<>();
+
+    for (Pedido pedido : pedidos) {
+        if (pedido.getEstado().equals("PENDIENTE")) {
+            resultado.add(pedido);
+        }
+    }
+
+    return resultado;
+}
+
+public List<Pedido> obtenerUrgentes() {
+
+    List<Pedido> resultado = new ArrayList<>();
+
+    for (Pedido pedido : pedidos) {
+        if (pedido.getPrioridad().equals("URGENTE")) {
+            resultado.add(pedido);
+        }
+    }
+
+    return resultado;
+}
+
+public List<Pedido> obtenerPorEstado(String estado) {
+
+    List<Pedido> resultado = new ArrayList<>();
+
+    for (Pedido pedido : pedidos) {
+        if (pedido.getEstado().equals(estado)) {
+            resultado.add(pedido);
+        }
+    }
+
+    return resultado;
+}
+
+public String obtenerResumen() {
+
+    int total = pedidos.size();
+    int pendientes = 0;
+    int confirmados = 0;
+    int despachados = 0;
+    int cancelados = 0;
+    int urgentes = 0;
+
+    for (Pedido pedido : pedidos) {
+
+        if (pedido.getEstado().equals("PENDIENTE")) {
+            pendientes++;
+        }
+
+        if (pedido.getEstado().equals("CONFIRMADO")) {
+            confirmados++;
+        }
+
+        if (pedido.getEstado().equals("DESPACHADO")) {
+            despachados++;
+        }
+
+        if (pedido.getEstado().equals("CANCELADO")) {
+            cancelados++;
+        }
+
+        if (pedido.getPrioridad().equals("URGENTE")) {
+            urgentes++;
+        }
+    }
+
+    return """
+            {
+                "totalPedidos": %d,
+                "pendientes": %d,
+                "confirmados": %d,
+                "despachados": %d,
+                "cancelados": %d,
+                "urgentes": %d
+            }
+            """.formatted(
+            total,
+            pendientes,
+            confirmados,
+            despachados,
+            cancelados,
+            urgentes
+    );
+}
 }
